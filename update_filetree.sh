@@ -12,7 +12,7 @@ fi
 
 # 使用 Python 生成 JSON，避免 shell 处理 JSON 的坑
 python3 << EOF
-import json, os, sys
+import json, os, sys, time
 
 tree = {"Content": {}}
 content_dir = os.path.join(os.getcwd(), "$ROOT")
@@ -25,11 +25,12 @@ for entry in os.listdir(content_dir):
     subdir = os.path.join(content_dir, entry)
     if not os.path.isdir(subdir):
         continue
+    now = int(time.time())
     files = {}
     for f in sorted(os.listdir(subdir)):
         if f.lower().endswith(('.jpg', '.jpeg', '.png')):
             name, _ = os.path.splitext(f)
-            files[name] = f
+            files[name] = f"{f}?t={now}"
     if files:
         tree["Content"][entry] = dict(sorted(files.items()))
 
